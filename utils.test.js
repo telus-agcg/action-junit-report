@@ -143,7 +143,7 @@ describe('parseFile', () => {
                 start_column: 0,
                 end_column: 0,
                 annotation_level: 'failure',
-                title: 'python/test_sample.py.test_which_fails',
+                title: 'test_sample.test_which_fails',
                 message: "AssertionError: assert 'test' == 'xyz'\n  - xyz\n  + test",
                 raw_details:
                     "def test_which_fails():\n        event = { 'attr': 'test'}\n>       assert event['attr'] == 'xyz'\nE       AssertionError: assert 'test' == 'xyz'\nE         - xyz\nE         + test\n\npython/test_sample.py:10: AssertionError"
@@ -155,11 +155,67 @@ describe('parseFile', () => {
                 start_column: 0,
                 end_column: 0,
                 annotation_level: 'failure',
-                title: 'python/test_sample.py.test_with_error',
+                title: 'test_sample.test_with_error',
                 message: "AttributeError: 'dict' object has no attribute 'attr'",
                 raw_details:
                     "def test_with_error():\n        event = { 'attr': 'test'}\n>       assert event.attr == 'test'\nE       AttributeError: 'dict' object has no attribute 'attr'\n\npython/test_sample.py:14: AttributeError"
             }
+        ]);
+    });
+
+    it('should parse marathon results', async () => {
+        const { count, skipped, annotations } = await parseFile('marathon_tests/com.mikepenz.DummyTest#test_02_dummy.xml');
+
+        expect(count).toBe(1);
+        expect(skipped).toBe(0);
+        expect(annotations).toStrictEqual([]);
+    });
+
+    it('should parse and fail marathon results', async () => {
+        const { count, skipped, annotations } = await parseFile('marathon_tests/com.mikepenz.DummyUtilTest#test_01_dummy.xml');
+
+        expect(count).toBe(1);
+        expect(skipped).toBe(0);
+        expect(annotations).toStrictEqual([
+            {
+                "annotation_level": "failure",
+                "end_column": 0,
+                "end_line": 1,
+                "message": "java.io.FileNotFoundException: No content provider: content://com.xyz/photo.jpg\nat android.content.ContentResolver.openTypedAssetFileDescriptor(ContentResolver.java:1969)",
+                "path": "DummyUtilTest",
+                "raw_details": "java.io.FileNotFoundException: No content provider: content://com.xyz/photo.jpg\nat android.content.ContentResolver.openTypedAssetFileDescriptor(ContentResolver.java:1969)\nat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2205)",
+                "start_column": 0,
+                "start_line": 1,
+                "title": "DummyUtilTest.test_01_dummy",
+            },
+        ]);
+    });
+
+    it('should parse empty cunit results', async () => {
+        const { count, skipped, annotations } = await parseFile('cunit/testEmpty.xml');
+
+        expect(count).toBe(0);
+        expect(skipped).toBe(0);
+        expect(annotations).toStrictEqual([]);
+    });
+
+    it('should parse failure cunit results', async () => {
+        const { count, skipped, annotations } = await parseFile('cunit/testFailure.xml');
+
+        expect(count).toBe(4);
+        expect(skipped).toBe(0);
+        expect(annotations).toStrictEqual([
+            {
+                "annotation_level": "failure",
+                "end_column": 0,
+                "end_line": 1,
+                "message": "false == something.loadXml(xml_string)",
+                "path": "loadFromXMLString_When_Should2Test",
+                "raw_details": "false == something.loadXml(xml_string)\nFile: /dumm/core/tests/testFailure.cpp\nLine: 77",
+                "start_column": 0,
+                "start_line": 1,
+                "title": "loadFromXMLString_When_Should2Test.loadFromXMLString_When_Should2Test",
+            },
         ]);
     });
 });

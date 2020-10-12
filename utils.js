@@ -18,13 +18,16 @@ const resolveFileAndLine = (file, classname, output) => {
 const resolvePath = async filename => {
     core.debug(`Resolving path for ${filename}`);
     const globber = await glob.create(`**/${filename}.*`, { followSymbolicLinks: false });
-    const results = await globber.glob();
-    core.debug(`Matched files: ${results}`);
-    const searchPath = globber.getSearchPaths()[0];
-    const path = results.length ? results[0].slice(searchPath.length + 1) : filename;
-    core.debug(`Resolved path: ${path}`);
-
-    return path;
+    const searchPath = globber.getSearchPaths() ? globber.getSearchPaths()[0] : "";
+    for await (const result of globber.globGenerator()) {
+        core.debug(`Matched file: ${result}`);
+        if(!result.includes("/build/")) {
+            const path = result.slice(searchPath.length + 1)
+            core.debug(`Resolved path: ${path}`);
+            return path;
+        }
+    }
+    return filename
 };
 
 async function parseFile(file) {
@@ -43,6 +46,10 @@ async function parseFile(file) {
             : [report.testsuites.testsuite];
 
     for (const testsuite of testsuites) {
+        if(!testsuite || !testsuite.testcase) {
+            return { count, skipped, annotations };
+        }
+
         const testcases = Array.isArray(testsuite.testcase)
             ? testsuite.testcase
             : testsuite.testcase
@@ -61,14 +68,14 @@ async function parseFile(file) {
                 ).trim();
 
                 const message = (
-                    (testcase.failure && testcase.failure._attributes.message) ||
-                    (testcase.error && testcase.error._attributes.message) ||
+                    (testcase.failure && testcase.failure._attributes && testcase.failure._attributes.message) ||
+                    (testcase.error && testcase.error._attributes && testcase.error._attributes.message) ||
                     stackTrace.split('\n').slice(0, 2).join('\n')
                 ).trim();
 
                 const { filename, line } = resolveFileAndLine(
                     testcase._attributes.file,
-                    testcase._attributes.classname,
+                    testcase._attributes.classname ? testcase._attributes.classname : testcase._attributes.name,
                     stackTrace
                 );
 

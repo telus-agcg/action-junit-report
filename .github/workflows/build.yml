@@ -3,30 +3,20 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-main-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-main-maven-
-      - run: cd tests && mvn clean test --batch-mode -Dmaven.test.failure.ignore=true
-      - uses: scacap/action-surefire-report@master
-        if: endsWith(github.ref, 'master') == false
+      - uses: actions/checkout@v2
+      - uses: mikepenz/action-junit-report@main
+        if: endsWith(github.ref, 'main') == false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          check_name: Example Surefire Test Report
-      - uses: cclauss/GitHub-Action-for-pytest@0.5.0
-        with:
-          args: pytest --junit-xml=python/report.xml python/ || exit 0
-      - uses: scacap/action-surefire-report@master
-        if: endsWith(github.ref, 'master') == false
+          check_name: Example Junit Test Report
+      - uses: mikepenz/action-juing-report@main
+        if: endsWith(github.ref, 'main') == false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           check_name: Example Pytest Report
@@ -34,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
