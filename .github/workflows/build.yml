@@ -14,8 +14,8 @@ jobs:
         if: endsWith(github.ref, 'main') == false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          check_name: Example Junit Test Report
-      - uses: mikepenz/action-juing-report@main
+          check_name: Example JUnit Test Report
+      - uses: mikepenz/action-junit-report@main
         if: endsWith(github.ref, 'main') == false
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
