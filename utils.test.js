@@ -171,6 +171,26 @@ describe('parseFile', () => {
         expect(annotations).toStrictEqual([]);
     });
 
+    it('should parse marathon results and retrieve message', async () => {
+        const { count, skipped, annotations } = await parseFile('marathon_tests/com.mikepenz.DummyTest3#test_01.xml');
+
+        expect(count).toBe(1);
+        expect(skipped).toBe(0);
+        expect(annotations).toStrictEqual([
+            {
+                "annotation_level": "failure",
+                "end_column": 0,
+                "end_line": 1,
+                "message": "test_01",
+                "path": "DummyTest3",
+                "raw_details": "",
+                "start_column": 0,
+                "start_line": 1,
+                "title": "DummyTest3.test_01",
+            }
+        ]);
+    });
+
     it('should parse and fail marathon results', async () => {
         const { count, skipped, annotations } = await parseFile('marathon_tests/com.mikepenz.DummyUtilTest#test_01_dummy.xml');
 
