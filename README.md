@@ -1,26 +1,36 @@
+<div align="center">
+  :octocat:
+</div>
+<h1 align="center">
+  action-junit-report
+</h1>
+
+<p align="center">
+    ... reports JUnit test results as GitHub pull request check.
+</p>
+
+<div align="center">
+  <a href="https://github.com/mikepenz/action-junit-report">
+		<img src="https://github.com/mikepenz/action-junit-report/workflows/CI/badge.svg"/>
+	</a>
+</div>
+<br />
+
+-------
+
 # GitHub Action: Process junit reports
 
 This action processes junit XML reports on pull requests and shows the result as a PR check with summary and annotations.
-
-![Screenshot](./screenshot.png)
+If you are looking for surefire reporting check out the amazing plugin by [ScaCap - action-surefire-report](https://github.com/ScaCap/action-surefire-report)
 
 ## Inputs
 
-### `github_token`
-
-**Required**. Usually in form of `github_token: ${{ secrets.GITHUB_TOKEN }}`.
-
-### `report_paths`
-
-Optional. [Glob](https://github.com/actions/toolkit/tree/master/packages/glob) expression to junit report paths. The default is `**/junit-reports/TEST-*.xml`.
-
-### `check_name`
-
-Optional. Check name to use when creating a check run. The default is `Test Report`.
-
-### `commit`
-
-Optional. The commit sha to update the status. This is useful when you run it with `workflow_run`.
+| **Input**      | **Description**                                                                                                                                                    |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `github_token` | **Required**. Usually in form of `github_token: ${{ secrets.GITHUB_TOKEN }}`.                                                                                      |
+| `report_paths` | **Required**. [Glob](https://github.com/actions/toolkit/tree/master/packages/glob) expression to junit report paths. The default is `**/junit-reports/TEST-*.xml`. |
+| `check_name`   | Optional. Check name to use when creating a check run. The default is `Test Report`.                                                                               |
+| `commit`       | Optional. The commit SHA to update the status. This is useful when you run it with `workflow_run`.                                                                 |
 
 ## Example usage
 
@@ -37,35 +47,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v1
       - name: Build and Run Tests
-        run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
+        run: # execute your tests generating test results
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@{specific-sha1}
+        uses: mikepenz/action-junit-report@v1
         with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-## Tips for Gradle
-
-As Gradle uses a different build directory than Maven by default, you might need to set the `report_paths` variable:
-
-```yaml
-    report_paths: '**/build/test-results/test/TEST-*.xml'
-```
-
-You also need to enable JUnit XML reports as shown below.
-
-```groovy
-test {
-  reports {
-    junitXml.enabled = true
-  }
-}
 ```
 
 ## Note
 
 Forked from: https://github.com/ScaCap/action-surefire-report
 
+# Sample
+
+![Screenshot](./screenshot.png)
 
 # License
 
