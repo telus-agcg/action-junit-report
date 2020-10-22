@@ -1,16 +1,16 @@
-name: 'Surefire Report'
-description: 'Report Surefire test results as annotations on Github Pull Request [junit, failsafe]'
+name: 'JUnit Report'
+description: 'Report JUnit test results as annotations on Github Pull Request [junit, failsafe]'
 branding:
-  icon: 'check-square'
+  icon: 'check-circle'
   color: 'green'
 inputs:
   github_token:
     description: 'GITHUB_TOKEN'
     required: true
   report_paths:
-    description: 'surefire xml report paths in glob format'
+    description: 'junit xml report paths in glob format'
     required: false
-    default: '**/surefire-reports/TEST-*.xml'
+    default: '**/junit-reports/TEST-*.xml'
   check_name:
     description: 'check name for test reports'
     required: false

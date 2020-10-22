@@ -20,7 +20,7 @@
     "GitHub",
     "Actions",
     "Junit",
-    "Surefire"
+    "test"
   ],
   "bugs": {
     "url": "https://github.com/mikepenz/action-junit-report/issues"
