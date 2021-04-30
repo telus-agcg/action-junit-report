@@ -14,12 +14,12 @@ const action = async () => {
     const foundResults = count > 0 || skipped > 0;
     const title = foundResults
         ? `${count} tests run, ${skipped} skipped, ${annotations.length} failed.`
-        : 'No test results found!';
+        : 'No test results found.';
     core.info(`Result: ${title}`);
 
     const pullRequest = github.context.payload.pull_request;
     const link = pullRequest && pullRequest.html_url || github.context.ref;
-    const conclusion = foundResults && annotations.length === 0 ? 'success' : 'failure';
+    const conclusion = annotations.length === 0 ? 'success' : 'failure';
     const status = 'completed';
     const head_sha = commit || pullRequest && pullRequest.head.sha || github.context.sha;
     core.info(
