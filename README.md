@@ -2,12 +2,19 @@
   :octocat:
 </div>
 <h1 align="center">
-  action-junit-report
+  action-junit-report [ARCHIVED]
 </h1>
 
 <p align="center">
     ... reports JUnit test results as GitHub pull request check.
+
 </p>
+
+<h3 align="center">
+<b>
+The project is archived. Use <a href="https://github.com/mikepenz/action-junit-report"> mikepenz/action-junit-report </a> instead.
+</b>
+</h3>
 
 <div align="center">
   <a href="https://github.com/mikepenz/action-junit-report">
